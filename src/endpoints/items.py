@@ -18,7 +18,7 @@ async def create_item(item: ItemCreate):
     }
 
 
-@router.get(path='/on_map', response_model=list[PlacedItem])
+@router.get(path='/on_map')
 async def get_items_on_map(
     east_longitude: float,
     west_longitude: float,
@@ -32,7 +32,9 @@ async def get_items_on_map(
         northLatitude=north_latitude,
         southLatitude=south_latitude,
     )
-    return await pdg.get_placed_items_on_map(map_region=map_region)
+    return {
+        "items": await pdg.get_placed_items_on_map(map_region=map_region)
+    }
 
 
 @router.get(path='/{item_id}', response_model=PlacedItem)
