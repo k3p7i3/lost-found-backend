@@ -1,9 +1,11 @@
-from pydantic import ValidationError
+from fastapi import UploadFile
 
 from src.models.user import User, UserAuth
 from src.db.gateways.general import GeneralGateway
 from src.logic.utils import check_password_match
 from src.exceptions import AuthException
+from src.config import settings
+
 
 class UserLogicGateway:
     def __init__(self):
@@ -27,5 +29,9 @@ class UserLogicGateway:
         if db_user and check_password_match(user.password, db_user.password):
             return db_user
 
-
-
+    async def create_user_image(self, user_id: int, image: UploadFile) -> str:
+        avatar_path = settings.USERS_STORAGE + '/' + str(user_id) + '.jpeg'
+        await self.gt.files.save_upload_file(avatar_path, image)
+        avatar_path = avatar_path[len(settings.ITEMS_STORAGE) + 1:]
+        await self.gt.users.update(user_id=user_id, avatar_path=avatar_path)
+        return avatar_path

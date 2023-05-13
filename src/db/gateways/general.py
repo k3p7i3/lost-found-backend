@@ -2,6 +2,7 @@ from src.db.gateways import (
     users,
     items,
     places,
+    files,
 )
 
 
@@ -10,3 +11,4 @@ class GeneralGateway:
         self.users = users.UsersGateway()
         self.items = items.ItemsGateway()
         self.places = places.PlacesGateway()
+        self.files = files.FileGateway()

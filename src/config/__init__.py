@@ -1,7 +1,7 @@
 from pydantic import BaseSettings
 
 
-class Settings:
+class Settings(BaseSettings):
 
     DB_USER = 'postgres'
     DB_PASSWORD = '2567'
@@ -22,6 +22,9 @@ class Settings:
     @property
     def database_url(self):
         return 'postgresql://{user}:{password}@{host}:{port}/{database}'.format(**self.database)
+
+    ITEMS_STORAGE = '../appdata/images/items'
+    USERS_STORAGE = '../appdata/images/users'
 
 
 settings = Settings()

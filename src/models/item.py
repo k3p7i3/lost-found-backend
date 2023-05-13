@@ -6,10 +6,6 @@ from src.enums import ItemCategory, ItemReturn
 from src.models.place import Place
 
 
-def delete_timezone(dt: datetime) -> datetime:
-    return dt.replace(tzinfo=None)
-
-
 class ItemBase(BaseModel):
     name: str
     description: str
@@ -17,15 +13,13 @@ class ItemBase(BaseModel):
     return_way: ItemReturn
     author_id: int
 
-    created_at: datetime
-    updated_at: datetime
-
-    _normilize_create_date = validator('created_at', allow_reuse=True)(delete_timezone)
-    _normilize_update_date = validator('updated_at', allow_reuse=True)(delete_timezone)
+    created_at: datetime = datetime.now()
+    updated_at: datetime = datetime.now()
 
 
 class Item(ItemBase):
     item_id: int
+    image_path: str | None = None
 
 
 class ItemCreate(ItemBase):

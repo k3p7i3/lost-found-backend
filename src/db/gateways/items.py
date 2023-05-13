@@ -12,7 +12,7 @@ class ItemsGateway:
     prim_key = 'item_id'
     model = Item
 
-    async def get_base_item_by_condition(self, condition)  -> Item | None:
+    async def get_base_item_by_condition(self, condition) -> Item | None:
         query = self.table.select().where(condition)
         data = await database.fetch_one(query)
         if data:
@@ -27,7 +27,7 @@ class ItemsGateway:
         data = await database.fetch_one(query)
         return dict(**data._mapping) if data else dict()
 
-    async def get_base_items_by_author(self, author_id: int) -> list[Item]:
+    async def get_items_by_author(self, author_id: int) -> list[Item]:
         query = self.table.select().where(self.table.c.author_id == author_id)
         rows = await database.fetch_all(query)
         items = []
@@ -37,6 +37,15 @@ class ItemsGateway:
 
     async def insert(self, **fields) -> int:
         query = self.table.insert().values(**fields)
+        return await database.execute(query)
+
+    async def update(self, item_id: int, **fields):
+        query = (
+            self.table
+            .update()
+            .where(self.table.c[self.prim_key] == item_id)
+            .values(**fields)
+        )
         return await database.execute(query)
 
     def get_items_with_place_query(self, select_list: list):

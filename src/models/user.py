@@ -7,12 +7,14 @@ class User(BaseModel):
     name: str
     phone_number: str
     password: str       # hash of password
+    avatar_path: str | None = None
 
 
 class UserOut(BaseModel):
     user_id: int
     name: str
     phone_number: str
+    avatar_path: str | None = None
 
 
 class UserAuth(BaseModel):

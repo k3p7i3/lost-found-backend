@@ -1,3 +1,6 @@
+from fastapi import UploadFile
+
+from src.config import settings
 from src.db.gateways.general import GeneralGateway
 from src.models.item import Item, PlacedItem, ItemCreate, ItemBase
 from src.models.mapregion import MapRegion
@@ -19,16 +22,22 @@ class ItemLogicGateway:
         )
         return item_id
 
-    async def create_placed_item(self, item: ItemCreate) -> int:
+    async def create_item(self, item: ItemCreate) -> int:
         place_data = {
             'address': item.place.address,
             'latitude': item.place.coordinates.latitude,
             'longitude': item.place.coordinates.longitude,
         }
         place_id = await self.gt.places.insert(**place_data)
-
         item_id = await self._create_base_item_with_place_id(item=ItemBase(**item.dict()), place_id=place_id)
         return item_id
+
+    async def create_item_image(self, item_id: int, image: UploadFile) -> str:
+        image_path = settings.ITEMS_STORAGE + '/' + str(item_id) + '.jpeg'
+        await self.gt.files.save_upload_file(image_path, image)
+        image_path = image_path[len(settings.ITEMS_STORAGE) + 1:]
+        await self.gt.items.update(item_id=item_id, image_path=image_path)
+        return image_path
 
     async def get_base_item_by_id(self, item_id: int) -> Item | None:
         return await self.gt.items.get_base_item_by_id(item_id)
@@ -44,7 +53,7 @@ class ItemLogicGateway:
 
     async def get_items_by_author(self, author_id: int) -> list[Item]:
         if await self.gt.users.check_user_exists_by_id(user_id=author_id):
-            return await self.gt.items.get_base_items_by_author(author_id=author_id)
+            return await self.gt.items.get_items_by_author(author_id=author_id)
 
         raise UserNotExistsException(user_id=author_id)
 

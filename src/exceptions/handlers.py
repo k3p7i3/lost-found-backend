@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 
 from src.exceptions import (
     AuthException,
+    FileNotExistException,
     UserNotExistsException,
     ItemNotExistsException,
 )
@@ -36,5 +37,15 @@ def add_exception_handlers(app: FastAPI) -> None:
             content={
                 'type': 'object not exists',
                 'details': 'Item with id: {id} does not exist'.format(id=exc.item_id),
+            }
+        )
+
+    @app.exception_handler(FileNotExistException)
+    async def file_not_exist_exception_handler(request: Request, exc: FileNotExistException):
+        return JSONResponse(
+            status_code=404,
+            content={
+                'type': 'object not exists',
+                'details': 'File with path: {path} does not exist'.format(path=exc.path),
             }
         )

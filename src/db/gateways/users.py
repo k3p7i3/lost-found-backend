@@ -26,6 +26,15 @@ class UsersGateway:
         query = self.table.insert().values(**fields)
         return await database.execute(query)
 
+    async def update(self, user_id: int, **fields):
+        query = (
+            self.table
+            .update()
+            .where(self.table.c[self.prim_key] == user_id)
+            .values(**fields)
+        )
+        return await database.execute(query)
+
     async def get_user_by_cond(self, condition) -> User | None:
         query = self.table.select().where(condition)
         data = await database.fetch_one(query)

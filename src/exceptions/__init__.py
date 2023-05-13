@@ -11,3 +11,8 @@ class UserNotExistsException(Exception):
 class ItemNotExistsException(Exception):
     def __init__(self, item_id):
         self.item_id = item_id
+
+
+class FileNotExistException(Exception):
+    def __init__(self, path):
+        self.path = path

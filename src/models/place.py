@@ -9,6 +9,3 @@ class Location(BaseModel):
 class Place(BaseModel):
     address: str
     coordinates: Location
-    # country: str
-    # country_code: str
-    # mapRegion: MapRegion

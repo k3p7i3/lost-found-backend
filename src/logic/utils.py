@@ -24,3 +24,5 @@ def hash_password(password: str) -> str:
 
 def check_password_match(password: str, hashed_password: str):
     return password == hashed_password
+
+
